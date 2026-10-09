@@ -1,0 +1,4 @@
+.env
+seen_*.json
+__pycache__/
+scan_*.log
