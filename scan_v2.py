@@ -35,6 +35,10 @@ APP_TERMS = [
     "Mindbody Business", "Glofox",
     # scheduling / appointments
     "Square Appointments", "Setmore", "Acuity Scheduling",
+    # Oct 11 expansion (vein-yield: appstore is the high-quality vein) - verified business-side listings
+    "Pike13", "Momence", "PocketSuite", "Phorest Go", "Zenoti", "WellnessLiving", "Boulevard",
+    # trades expansion
+    "Kickserv",
 ]
 NOW = datetime.datetime.now(datetime.timezone.utc)
 CUTOFF = (NOW - datetime.timedelta(days=30)).timestamp()
