@@ -9,7 +9,7 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 PAIN = re.compile(r"(is there a tool|any tool|looking for a (tool|app|software)|how do you (all )?(handle|manage|track|deal)|i do this manually|manually every|every week|spreadsheet|tedious|frustrat|nightmare|hate (doing|how)|wish there was|drives me crazy|waste(s)? (of )?time|takes (me )?hours|recommend (a|an|some)? ?(tool|app|software)|what do you use (for|to)|only use(s)? (it|them|the app) for|too expensive|bloated|overkill|paying for features|cheaper alternative|looking for an alternative|switched? (from|away))", re.I)
 WTP = re.compile(r"(i'?d pay|would pay|happily pay|i will pay|willing to pay|pay for (a|an|this|something)|worth paying|paying for|charge me|spend money|budget for|take my money)", re.I)
 WORK = re.compile(r"(small business|my business|my shop|my salon|my studio|my store|client(s)?|invoice|invoicing|freelanc|contractor|employee|staff|booking|appointment|schedule (my|employees|staff)|saas|software|workflow|spreadsheet|quickbooks|revenue|pricing|subscription|customer|workplace|my team|at work|my job|startup|founder|agency|retail|restaurant|gym|fitness|trades|plumb|hvac|electric|landscap|cleaning business|etsy|shopify|e-?commerce)", re.I)
-FOUNDER = re.compile(r"^(hey|hello|hi) (product hunt|everyone)|i'?m (the )?(founder|creator|maker)|we('ve| have) built|proud to (share|launch)|i built (this|sanctuary|demelio|protopm)", re.I)
+FOUNDER = re.compile(r"(hey|hello|hi) (product hunt|everyone)|i'?m (the )?(founder|co-founder|creator|maker|indie (dev|maker))|we('ve| have) built|proud to (share|launch)|i built (this|sanctuary|demelio|protopm)|the idea for \w+ came from|my first time (building|launching)", re.I)
 UA = {"User-Agent": "LeiSystematica-discovery-scan/0.2 (read-only market research)"}
 
 def load_env():
@@ -233,8 +233,9 @@ def scan_producthunt(out, seen_ids):
                         if datetime.datetime.fromisoformat(cn.get("createdAt","").replace("Z","+00:00")).timestamp() < CUTOFF: continue
                     except Exception: pass
                     body = cn.get("body","") or ""
-                    if FOUNDER.search(body.strip()[:200]): continue  # founder self-promo, not user pain
-                    pain, wtp = classify(body)
+                    plain = re.sub(r"<[^>]+>", " ", body).strip()
+                    if FOUNDER.search(plain[:300]): continue  # founder self-promo, not user pain
+                    pain, wtp = classify(plain)
                     if pain:
                         out.append(line(cn.get("createdAt","")[:10], "producthunt:comment", cn.get("url","") or n.get("url",""), body[:120], wtp, f"{cn.get('votesCount',0)} votes"))
             except Exception as e2: print(f"WARN ph comments {n.get('id')}: {e2}", file=sys.stderr)
